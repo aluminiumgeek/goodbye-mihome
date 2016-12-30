@@ -1,0 +1,45 @@
+html, body {
+    height: 100%;
+}
+
+.container {
+    margin-top: 200px;
+}
+
+.panel {
+    opacity: 0.77;
+}
+
+.panel-heading {
+    font-size: 35px;
+}
+
+.ht .panel-body {
+    text-align: center;
+}
+
+.panel-body > span {
+    font-size: 50px;
+}
+
+.delimiter {
+    font-size: 30px!important;
+    margin: 0 10px;
+}
+
+.temperature {
+    color: #bf3d3d;
+}
+
+.decimal {
+    font-size: 22px;
+}
+
+.unit {
+    font-size: 25px;
+    margin-left: 5px;
+}
+
+.humidity {
+    color: #525fdb;
+}

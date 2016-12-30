@@ -1,0 +1,20 @@
+DEBUG = True
+
+# PostgreSQL connection
+DBNAME = 'mihome'
+DBUSER = 'mihome'
+DBPASS = 'password'
+
+# Gateway IP
+MIHOME_GATEWAY_IP = '192.168.100.103'
+
+# Sensors - SID : Human-readable name
+SENSORS = {
+    '158d000116a58e': 'Office',
+    '158d0001264ac3': 'Bedroom 1',
+    '158d0001264ac3': 'Bedroom 2',
+    '158d00010850da': 'Outside'
+}
+
+# Web application port
+WEB_APP_PORT = 8888

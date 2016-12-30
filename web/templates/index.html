@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+       <title>Home</title>
+       <meta charset="utf-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+       <link href="/static/css/bootstrap.css" rel="stylesheet">
+       <link href="/static/css/main.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class='container'>
+            <div class='row ht'>
+                {% for sensor in sensors %}
+                <div class='col-md-6'>
+                    <div class='panel panel-primary'>
+                        <div class='panel-heading'>{{ sensor['name'] }}</div>
+                        <div class='panel-body'>
+                            <span class='temperature'>{{ sensor['temperature'][0] }}.<span class='decimal'>{{ sensor['temperature'][1] }}</span><span class='unit'>°C</span></span>
+                            <span class='delimiter'>/</span>
+                            <span class='humidity'>{{ sensor['humidity'][0] }}.<span class='decimal'>{{ sensor['humidity'][1] }}</span><span class='unit'>%</span></span>
+                        </div>
+                    </div>
+                </div>
+                {% end %}
+            </div>
+        </div>
+        <div class='hidden'>
+            {% for image in images %}
+                <div class='bg-image' data-bg='{{ image }}'></div>
+            {% end %}
+        </div>
+        <script src='/static/js/jquery-3.1.1.min.js' type='text/javascript'></script>
+        <script type="text/javascript" src="/static/js/jquery.backstretch.min.js"></script>
+        <script src='/static/js/main.js' type='text/javascript'></script>
+    </body>
+ </html>

@@ -87,3 +87,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+config.py
+web/static/img/bg/*.jpg
