@@ -23,7 +23,7 @@
             url: '/',
         }).done(function(page) {
             var data_html = $(page).find('.row.ht').html();
-            $('.row.ht').html(data_html)ж
+            $('.row.ht').html(data_html);
         })
     }
     
