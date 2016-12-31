@@ -1,7 +1,6 @@
 from datetime import datetime
 import json
 import socket
-import binascii
 import struct
 import psycopg2
 
