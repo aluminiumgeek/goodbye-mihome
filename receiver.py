@@ -20,7 +20,6 @@ SERVER_PORT = 4321
  
 MULTICAST_ADDRESS = '224.0.0.50'
 SOCKET_BUFSIZE = 1024
-MESSAGE = binascii.unhexlify('21310020ffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
  
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
@@ -37,6 +36,7 @@ current = {}
 
 while True:
     data, addr = sock.recvfrom(SOCKET_BUFSIZE)  # buffer size is 1024 bytes
+    print(datetime.now().isoformat(), data)
     message = json.loads(data.decode())
     data = json.loads(message['data'])
     if message.get('model') == 'sensor_ht' and not sensor_ht.process(conn, cursor, current, message, data):
