@@ -15,9 +15,9 @@
                     <div class="panel panel-primary" data-sid="{{ sensor['sid'] }}">
                         <div class='panel-heading'>{{ sensor['name'] }}</div>
                         <div class='panel-body'>
-                            <span class='temperature'>{{ sensor['temperature'][0] }}.<span class='decimal'>{{ sensor['temperature'][1] }}</span><span class='unit'>°C</span></span>
+                            <span class='temperature'><span class='main'>{{ sensor['temperature'][0] }}</span>.<span class='decimal'>{{ sensor['temperature'][1] }}</span><span class='unit'>°C</span></span>
                             <span class='delimiter'>/</span>
-                            <span class='humidity'>{{ sensor['humidity'][0] }}.<span class='decimal'>{{ sensor['humidity'][1] }}</span><span class='unit'>%</span></span>
+                            <span class='humidity'><span class='main'>{{ sensor['humidity'][0] }}</span>.<span class='decimal'>{{ sensor['humidity'][1] }}</span><span class='unit'>%</span></span>
                         </div>
                     </div>
                 </div>

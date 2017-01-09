@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 
 from web.w import UpdatesHandler
+from web.utils import format_value
 
 
 def process(conn, cursor, current, message, data):
@@ -26,9 +27,10 @@ def process(conn, cursor, current, message, data):
     conn.commit()
 
     data = {
+        'sensor': 'sensor_ht',
         'sid': message['sid'],
-        'temperature': current['temperature'],
-        'humidity': current['humidity']
+        'temperature': format_value(current['temperature']),
+        'humidity': format_value(current['humidity'])
     }
     UpdatesHandler.send_updates(data)
 
