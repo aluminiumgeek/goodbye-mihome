@@ -50,9 +50,9 @@ class MainHandler(tornado.web.RequestHandler):
                     }
                 ]
             }
-            cursor.execute('SELECT sid, temperature, humidity, dt FROM ht WHERE sid = %s ORDER BY dt LIMIT 25', (sid,))
+            cursor.execute('SELECT sid, temperature, humidity, dt FROM ht WHERE sid = %s ORDER BY dt DESC LIMIT 25', (sid,))
 
-            for sid, temperature, humidity, dt in cursor.fetchall():
+            for sid, temperature, humidity, dt in reversed(cursor.fetchall()):
                 sensors_data[sid]['labels'].append(dt.isoformat())
                 sensors_data[sid]['datasets'][0]['data'].append(format_value(temperature))
                 sensors_data[sid]['datasets'][1]['data'].append(format_value(humidity))
