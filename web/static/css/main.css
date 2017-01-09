@@ -43,3 +43,14 @@ html, body {
 .humidity {
     color: #525fdb;
 }
+
+.panel {
+    position: relative;
+}
+
+.panel canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: .4;
+}

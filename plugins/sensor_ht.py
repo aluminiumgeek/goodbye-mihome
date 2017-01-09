@@ -1,4 +1,7 @@
+import json
 from datetime import datetime
+
+from web.w import UpdatesHandler
 
 
 def process(conn, cursor, current, message, data):
@@ -18,7 +21,15 @@ def process(conn, cursor, current, message, data):
     if not save:
         return False
 
-    query = "INSERT INTO ht(sid, temperature, humidity, dt) VALUES ('{}', {}, {}, '{}')".format(message['sid'], current['temperature'], current['humidity'], datetime.now().isoformat())
-    cursor.execute(query)
+    query = "INSERT INTO ht(sid, temperature, humidity, dt) VALUES (%s, %s, %s, %s)"
+    cursor.execute(query, (message['sid'], current['temperature'], current['humidity'], datetime.now().isoformat()))
     conn.commit()
+
+    data = {
+        'sid': message['sid'],
+        'temperature': current['temperature'],
+        'humidity': current['humidity']
+    }
+    UpdatesHandler.send_updates(data)
+
     return True

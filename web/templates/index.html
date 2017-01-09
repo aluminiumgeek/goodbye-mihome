@@ -10,9 +10,9 @@
     <body>
         <div class='container'>
             <div class='row ht'>
-                {% for sensor in sensors %}
+                {% for sensor in sensors_current %}
                 <div class='col-md-6'>
-                    <div class='panel panel-primary'>
+                    <div class="panel panel-primary" data-sid="{{ sensor['sid'] }}">
                         <div class='panel-heading'>{{ sensor['name'] }}</div>
                         <div class='panel-body'>
                             <span class='temperature'>{{ sensor['temperature'][0] }}.<span class='decimal'>{{ sensor['temperature'][1] }}</span><span class='unit'>°C</span></span>
@@ -24,13 +24,16 @@
                 {% end %}
             </div>
         </div>
-        <div class='hidden'>
-            {% for image in images %}
-                <div class='bg-image' data-bg='{{ image }}'></div>
-            {% end %}
-        </div>
         <script src='/static/js/jquery-3.1.1.min.js' type='text/javascript'></script>
-        <script type="text/javascript" src="/static/js/jquery.backstretch.min.js"></script>
+        <script src="/static/js/jquery.backstretch.min.js" type='text/javascript'></script>
+        <script src='/static/js/chart.min.js' type='text/javascript'></script>
         <script src='/static/js/main.js' type='text/javascript'></script>
+
+        <script type='text/javascript'>
+            var bg_images = {% raw json_encode(bg_images) %};
+            var sensors = {% raw json_encode(sensors) %};
+            var sensors_data = {% raw json_encode(sensors_data) %};
+            var sensors_current = {% raw json_encode(sensors_current) %};
+        </script>
     </body>
  </html>
