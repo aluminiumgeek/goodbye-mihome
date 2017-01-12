@@ -10,4 +10,4 @@ def run(store, conn, cursor):
     """Set random LED color every 10 seconds"""
     while True:
         gateway_led.set_color(random.choice(COLORS))
-        time.sleep(0.4)
+        time.sleep(10)
