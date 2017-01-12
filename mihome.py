@@ -1,4 +1,5 @@
 import binascii
+import importlib
 import json
 import psycopg2
 import socket
@@ -11,7 +12,7 @@ from redis import Redis
 
 import config
 from plugins import sensor_ht, gateway_token
-from web.w import run_app
+from web.w import run_app as web_app
 
 conn = psycopg2.connect("dbname={} user={} password={}".format(config.DBNAME, config.DBUSER, config.DBPASS))
 cursor = conn.cursor()
@@ -82,5 +83,15 @@ def get_key():
 
 
 if __name__ == '__main__':
-    Thread(target=run_app).start()
+    Thread(target=web_app).start()
+
+    for app_name in config.ENABLED_APPS:
+        try:
+            app = importlib.import_module('apps.{}'.format(app_name))
+        except ImportError as e:
+            print('Could not import app "{}": {}'.format(app_name, e))
+            continue
+        kwargs = {'store': store, 'conn': conn, 'cursor': cursor}
+        Thread(target=app.run, kwargs=kwargs).start()
+
     receiver()
