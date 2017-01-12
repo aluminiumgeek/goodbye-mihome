@@ -6,8 +6,13 @@
        <meta name="viewport" content="width=device-width, initial-scale=1">
        <link href="/static/css/bootstrap.css" rel="stylesheet">
        <link href="/static/css/main.css" rel="stylesheet">
+       <link href="/static/css/spectrum.css" rel="stylesheet">
     </head>
     <body>
+        <div class='gateway-block' title='Gateway LED Color'>
+            <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span>
+            <input type='text' id='color' />
+        </div>
         <div class='container'>
             <div class='row ht'>
                 {% for sensor in sensors_current %}
@@ -26,6 +31,7 @@
         </div>
         <script src='/static/js/jquery-3.1.1.min.js' type='text/javascript'></script>
         <script src="/static/js/jquery.backstretch.min.js" type='text/javascript'></script>
+        <script src='/static/js/spectrum.js' type='text/javascript'></script>
         <script src='/static/js/chart.min.js' type='text/javascript'></script>
         <script src='/static/js/main.js' type='text/javascript'></script>
 
@@ -34,6 +40,7 @@
             var sensors = {% raw json_encode(sensors) %};
             var sensors_data = {% raw json_encode(sensors_data) %};
             var sensors_current = {% raw json_encode(sensors_current) %};
+            var gateway_led = {% raw json_encode(gateway_led) %};
         </script>
     </body>
  </html>

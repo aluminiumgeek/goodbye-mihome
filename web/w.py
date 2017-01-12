@@ -1,3 +1,4 @@
+import json
 import os
 import random
 import sys
@@ -22,6 +23,8 @@ def get_cursor():
 class MainHandler(tornado.web.RequestHandler):
 
     def get(self):
+        from plugins import gateway_led
+
         cursor = get_cursor()
         cursor.execute('SELECT DISTINCT ON (sid) sid, temperature, humidity FROM ht ORDER BY sid, dt DESC')
         sensors_current = []
@@ -60,21 +63,45 @@ class MainHandler(tornado.web.RequestHandler):
         bg_images = map(lambda x: '/static/img/bg/%s' % x, os.listdir(os.path.join(os.path.dirname(__file__), "static", "img", "bg")))
         bg_images = list(filter(lambda x: x.endswith('.jpg'), bg_images))
 
+        brightness, color, status = gateway_led.get_status()
         self.render(
             "templates/index.html",
             sensors=config.SENSORS,
             sensors_current=sensors_current,
             sensors_data=sensors_data,
-            bg_images=bg_images
+            bg_images=bg_images,
+            gateway_led={
+                'brightness': brightness,
+                'color': color,
+                'status': status
+            }
         )
 
 
 class UpdatesHandler(tornado.websocket.WebSocketHandler):
-
     socket_clients = set()
 
     def open(self):
         self.socket_clients.add(self)
+
+    def on_message(self, message):
+        from plugins import gateway_led
+
+        message = json.loads(message)
+        if message.get('model') == gateway_led.MODEL:
+            command = message.get('command')
+            if command == 'color':
+                value = message['value'].replace('#', '')
+                gateway_led.set_color(value)
+            elif command == 'brightness':
+                value = message['value']
+                gateway_led.set_brightness(value)
+            elif command == 'rgb':
+                value = message['value'].replace('#', '')
+                gateway_led.set_rgb(value)
+            elif command == 'toggle':
+                gateway_led.toggle()
+            self.write_message({'model': gateway_led.MODEL, 'status': 'ok'})
 
     def on_close(self):
         self.socket_clients.remove(self)

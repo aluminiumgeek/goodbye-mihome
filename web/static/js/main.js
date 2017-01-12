@@ -32,6 +32,10 @@
         window.charts[sid] = new Chart(canvas.get(0), params);
     }
 
+    function get_ws() {
+        return new WebSocket('ws://' + window.location.host + '/updates');
+    }
+
     $(document).ready(function() {
         shuffle(bg_images)
         $.backstretch(bg_images, {duration: 5 * 60 * 1000, fade: 3500});
@@ -41,7 +45,9 @@
             create_chart(sid);
         }
 
-        var updatesSocket = new WebSocket('ws://' + window.location.host + '/updates');
+        var blocked_led_toggle;
+
+        var updatesSocket = get_ws();
         updatesSocket.onmessage = function(event) {
             var data = JSON.parse(event.data);
             if (data.sensor == 'sensor_ht') {
@@ -59,6 +65,48 @@
                 sensors_data[data.sid]['datasets'][1]['data'].shift();
                 create_chart(data.sid);
             }
+            if (data.model == 'gateway_led') {
+                if (data.status == 'ok') {
+                    blocked_led_toggle = false;
+                }
+            }
+        }
+
+        $("#color").spectrum({
+            color: '#ffffff00',//'#' + gateway_led.color,
+            chooseText: "Set LED color",
+            showAlpha: true,
+            change: function(data) {
+                var color = data.toHexString();
+                var alpha = data.getAlpha();
+                var brightness = Math.floor(alpha * 255);
+                if (updatesSocket.readyState == 2 || updatesSocket.readyState == 3) {
+                    updatesSocket = get_ws();
+                }
+                updatesSocket.send(JSON.stringify({
+                    model: 'gateway_led',
+                    command: 'rgb',
+                    value: brightness.toString(16) + color
+                }));
+            }
+        });
+
+        $('.gateway-block span').bind('click', function() {
+            if (!blocked_led_toggle) {
+                blocked_led_toggle = true;
+                $(this).toggleClass('off');
+                if (updatesSocket.readyState == 2 || updatesSocket.readyState == 3) {
+                    updatesSocket = get_ws();
+                }
+                updatesSocket.send(JSON.stringify({
+                    model: 'gateway_led',
+                    command: 'toggle',
+                }));
+            }
+        });
+
+        if (!gateway_led.status) {
+            $('.gateway-block span').addClass('off');
         }
     });
 })(jQuery);

@@ -7,7 +7,7 @@ import time
 from Crypto.Cipher import AES
 from datetime import datetime
 from threading import Thread
-from redis import StrictRedis
+from redis import Redis
 
 import config
 from plugins import sensor_ht, gateway_token
@@ -15,7 +15,7 @@ from web.w import run_app
 
 conn = psycopg2.connect("dbname={} user={} password={}".format(config.DBNAME, config.DBUSER, config.DBPASS))
 cursor = conn.cursor()
-store = StrictRedis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB)
+store = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB)
  
 MULTICAST_PORT = 9898
  
@@ -23,7 +23,6 @@ MULTICAST_ADDRESS = '224.0.0.50'
 SOCKET_BUFSIZE = 1024
 
 IV = bytes([0x17, 0x99, 0x6d, 0x09, 0x3d, 0x28, 0xdd, 0xb3, 0xba, 0x69, 0x5a, 0x2e, 0x6f, 0x58, 0x56, 0x2e])
-CIPHER = AES.new(config.MIHOME_GATEWAY_PASSWORD, AES.MODE_CBC, IV)
 
 
 def receiver():
@@ -47,6 +46,9 @@ def receiver():
         if message.get('model') == 'sensor_ht' and not sensor_ht.process(conn, cursor, current, message, data):
             continue
         elif message.get('model') == 'gateway':
+            if message.get('cmd') == 'report':
+                if data.get('rgb') == 0:
+                    store.set('gateway_led_value_off', 1)
             result = gateway_token.process(message)
             if not result:
                 continue
@@ -58,6 +60,8 @@ def receiver():
 
 
 def send_command(command):
+    if isinstance(command.get('data'), dict):
+        command['data'] = json.dumps(command['data'])
     gateway_addr = store.get('gateway_addr')
     if gateway_addr is None:
         print("Doesn't receive any heartbeat from gateway. Delaying request for 10 seconds.")
@@ -72,7 +76,8 @@ def send_command(command):
 
 def get_key():
     """Get current gateway key"""
-    encrypted = CIPHER.encrypt(store.get('gateway_token'))
+    cipher = AES.new(config.MIHOME_GATEWAY_PASSWORD, AES.MODE_CBC, IV)
+    encrypted = cipher.encrypt(store.get('gateway_token'))
     return binascii.hexlify(encrypted)
 
 
