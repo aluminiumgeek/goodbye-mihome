@@ -5,8 +5,8 @@ DBNAME = 'mihome'
 DBUSER = 'mihome'
 DBPASS = 'password'
 
-# Gateway IP
-MIHOME_GATEWAY_IP = '192.168.100.103'
+# MiHome App -> Gateway -> Settings -> About -> [Second last menu item]
+MIHOME_GATEWAY_PASSWORD = ''
 
 # Sensors - SID : Human-readable name
 SENSORS = {
