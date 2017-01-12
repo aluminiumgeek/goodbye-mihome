@@ -16,7 +16,7 @@ The list will expand as I receive more Xiaomi devices and make plugins for them.
 3. Create a PostgreSQL database and import `init.sql`
 4. Install required python packages: `pip install -r requirements.txt`
 4. Copy `config.py.example` to `config.py` and fill it with your settings
-5. Run `python mihome.py` to start data collector and web application
+5. Run `python mihome.py` to start data collector, web application and load apps defined in `ENABLED_APPS`
 
 
 ###Apps###
