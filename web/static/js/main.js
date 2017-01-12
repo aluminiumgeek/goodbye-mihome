@@ -73,7 +73,7 @@
         }
 
         $("#color").spectrum({
-            color: '#ffffff00',//'#' + gateway_led.color,
+            color: '#' + gateway_led.color,
             chooseText: "Set LED color",
             showAlpha: true,
             change: function(data) {
@@ -82,6 +82,10 @@
                 var brightness = Math.floor(alpha * 255);
                 if (updatesSocket.readyState == 2 || updatesSocket.readyState == 3) {
                     updatesSocket = get_ws();
+                }
+                var brightness = brightness.toString(16);
+                if (brightness.length == 1) {
+                    brightness = '0' + brightness;
                 }
                 updatesSocket.send(JSON.stringify({
                     model: 'gateway_led',
