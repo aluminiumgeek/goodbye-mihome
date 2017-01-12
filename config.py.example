@@ -5,6 +5,11 @@ DBNAME = 'mihome'
 DBUSER = 'mihome'
 DBPASS = 'password'
 
+# Redis connection
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0
+
 # MiHome App -> Gateway -> Settings -> About -> [Second last menu item]
 MIHOME_GATEWAY_PASSWORD = ''
 
