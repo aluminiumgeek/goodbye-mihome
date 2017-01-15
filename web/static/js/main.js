@@ -50,7 +50,7 @@
         var updatesSocket = get_ws();
         updatesSocket.onmessage = function(event) {
             var data = JSON.parse(event.data);
-            if (data.sensor == 'sensor_ht') {
+            if (data.device == 'sensor_ht') {
                 var t = data.temperature.split('.');
                 var h = data.humidity.split('.');
                 var panel = $('[data-sid="' + data.sid + '"]');
@@ -65,15 +65,25 @@
                 sensors_data[data.sid]['datasets'][1]['data'].shift();
                 create_chart(data.sid);
             }
-            if (data.model == 'gateway_led') {
-                if (data.status == 'ok') {
+            if (data.device == 'gateway_led') {
+                if (data.return == 'ok') {
                     blocked_led_toggle = false;
+                }
+                else if (data.status == 'on') {
+                    $('.gateway-block span').removeClass('off');
+                }
+                else if (data.status == 'off') {
+                    $('.gateway-block span').addClass('off');
+                }
+                if (data.brightness && data.color) {
+                    $('.gateway-block span').removeClass('off');
+                    $("#color").spectrum("set", data.brightness + data.color);
                 }
             }
         }
 
         $("#color").spectrum({
-            color: '#' + gateway_led.color,
+            color: gateway_led.brightness + gateway_led.color,
             chooseText: "Set LED color",
             showAlpha: true,
             change: function(data) {
@@ -88,7 +98,7 @@
                     brightness = '0' + brightness;
                 }
                 updatesSocket.send(JSON.stringify({
-                    model: 'gateway_led',
+                    device: 'gateway_led',
                     command: 'rgb',
                     value: brightness.toString(16) + color
                 }));
@@ -103,7 +113,7 @@
                     updatesSocket = get_ws();
                 }
                 updatesSocket.send(JSON.stringify({
-                    model: 'gateway_led',
+                    device: 'gateway_led',
                     command: 'toggle',
                 }));
             }

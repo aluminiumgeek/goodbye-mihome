@@ -88,7 +88,7 @@ class UpdatesHandler(tornado.websocket.WebSocketHandler):
         from plugins import gateway_led
 
         message = json.loads(message)
-        if message.get('model') == gateway_led.MODEL:
+        if message.get('device') == gateway_led.DEVICE:
             command = message.get('command')
             if command == 'color':
                 value = message['value'].replace('#', '')
@@ -101,7 +101,7 @@ class UpdatesHandler(tornado.websocket.WebSocketHandler):
                 gateway_led.set_rgb(value)
             elif command == 'toggle':
                 gateway_led.toggle()
-            self.write_message({'model': gateway_led.MODEL, 'status': 'ok'})
+            self.write_message({'device': gateway_led.DEVICE, 'return': 'ok'})
 
     def on_close(self):
         self.socket_clients.remove(self)

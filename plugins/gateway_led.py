@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from mihome import store, get_key, send_command
 
-MODEL = 'gateway_led'
+DEVICE = 'gateway_led'
 STORE_KEY = 'gateway_led_value'
 
 
@@ -23,10 +23,9 @@ def get_base_command():
 
 
 def get_status():
-    """Returns brigthness (0-1), color (hex), status (on/off)"""
+    """Returns brigthness (hex), color (hex), status (on/off)"""
     value = store.get(STORE_KEY) or '33ff4455'
-    brightness = int(int(value[:2], 16) / 255)
-    return brightness, value[2:].decode(), not store.get(STORE_KEY + 'off')
+    return value[:2].decode(), value[2:].decode(), not store.get(STORE_KEY + 'off')
 
 
 def set_color(code):

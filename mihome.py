@@ -14,7 +14,7 @@ from threading import Thread
 from redis import Redis
 
 import config
-from plugins import sensor_ht, gateway_token
+from plugins import sensor_ht, gateway
 from web.w import run_app as web_app
 
 conn = psycopg2.connect("dbname={} user={} password={}".format(config.DBNAME, config.DBUSER, config.DBPASS))
@@ -50,16 +50,7 @@ def receiver():
         if message.get('model') == 'sensor_ht' and not sensor_ht.process(conn, cursor, current, message, data):
             continue
         elif message.get('model') == 'gateway':
-            if message.get('cmd') == 'report':
-                if data.get('rgb') == 0:
-                    store.set('gateway_led_value_off', 1)
-            result = gateway_token.process(message)
-            if not result:
-                continue
-            sid, token = result
-            store.set('gateway_sid', sid)
-            store.set('gateway_token', token)
-            continue
+            gateway.process(store, message, data)
         current = {}
 
 

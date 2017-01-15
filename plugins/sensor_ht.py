@@ -27,7 +27,7 @@ def process(conn, cursor, current, message, data):
     conn.commit()
 
     data = {
-        'sensor': 'sensor_ht',
+        'device': 'sensor_ht',
         'sid': message['sid'],
         'temperature': format_value(current['temperature']),
         'humidity': format_value(current['humidity'])
