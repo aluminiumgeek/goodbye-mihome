@@ -1,8 +1,8 @@
 import json
 from datetime import datetime
 
+from utils import format_value
 from web.w import UpdatesHandler
-from web.utils import format_value
 
 
 def process(conn, cursor, current, message, data):

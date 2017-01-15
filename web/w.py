@@ -10,7 +10,7 @@ import tornado.websocket
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import config
-from .utils import format_value
+from utils import format_value, Notifications
 
 conn = psycopg2.connect("dbname={} user={} password={}".format(config.DBNAME, config.DBUSER, config.DBPASS))
 
@@ -74,7 +74,8 @@ class MainHandler(tornado.web.RequestHandler):
                 'brightness': brightness,
                 'color': color,
                 'status': status
-            }
+            },
+            notifications=Notifications.list()
         )
 
 
@@ -102,6 +103,9 @@ class UpdatesHandler(tornado.websocket.WebSocketHandler):
             elif command == 'toggle':
                 gateway_led.toggle()
             self.write_message({'device': gateway_led.DEVICE, 'return': 'ok'})
+        if message.get('kind') == 'notification':
+            if message.get('command') == 'read':
+                Notifications.remove(message.get('uuid'))
 
     def on_close(self):
         self.socket_clients.remove(self)

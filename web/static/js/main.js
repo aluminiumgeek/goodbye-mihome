@@ -33,7 +33,34 @@
     }
 
     function get_ws() {
-        return new WebSocket('ws://' + window.location.host + '/updates');
+        if (!updatesSocket || updatesSocket.readyState == 2 || updatesSocket.readyState == 3) {
+            return new WebSocket('ws://' + window.location.host + '/updates');
+        }
+        return updatesSocket;
+    }
+
+    var updatesSocket = get_ws();
+
+    var notification_queue = {};
+    function show_notification(type, title, text, uuid) {
+        var html = title ? '<h3>' + title + '</h3>' + text : text;
+        var n = noty({
+            type: type,
+            text: html,
+            theme: 'bootstrapTheme',
+            maxVisible: 5,
+            callback: {
+                afterClose: function() {
+                    var updatesSocket = get_ws();
+                    updatesSocket.send(JSON.stringify({
+                        kind: 'notification',
+                        command: 'read',
+                        uuid: uuid
+                    }));
+                }
+            }
+        });
+        notification_queue[uuid] = n.options.id;
     }
 
     $(document).ready(function() {
@@ -65,6 +92,7 @@
                 sensors_data[data.sid]['datasets'][1]['data'].shift();
                 create_chart(data.sid);
             }
+
             if (data.device == 'gateway_led') {
                 if (data.return == 'ok') {
                     blocked_led_toggle = false;
@@ -80,6 +108,15 @@
                     $("#color").spectrum("set", data.brightness + data.color);
                 }
             }
+
+            if (data.kind == 'notification') {
+                if (data.command == 'show') {
+                    show_notification(data.type, data.title, data.text, data.uuid);
+                }
+                else if (data.command == 'remove') {
+                    $.noty.close(notification_queue[data.uuid]);
+                }
+            }
         }
 
         $("#color").spectrum({
@@ -90,9 +127,7 @@
                 var color = data.toHexString();
                 var alpha = data.getAlpha();
                 var brightness = Math.floor(alpha * 255);
-                if (updatesSocket.readyState == 2 || updatesSocket.readyState == 3) {
-                    updatesSocket = get_ws();
-                }
+                var updatesSocket = get_ws();
                 var brightness = brightness.toString(16);
                 if (brightness.length == 1) {
                     brightness = '0' + brightness;
@@ -109,9 +144,7 @@
             if (!blocked_led_toggle) {
                 blocked_led_toggle = true;
                 $(this).toggleClass('off');
-                if (updatesSocket.readyState == 2 || updatesSocket.readyState == 3) {
-                    updatesSocket = get_ws();
-                }
+                var updatesSocket = get_ws();
                 updatesSocket.send(JSON.stringify({
                     device: 'gateway_led',
                     command: 'toggle',
@@ -121,6 +154,10 @@
 
         if (!gateway_led.status) {
             $('.gateway-block span').addClass('off');
+        }
+
+        for (i in notifications) {
+            show_notification(notifications[i].type, notifications[i].title, notifications[i].text, notifications[i].uuid);
         }
     });
 })(jQuery);

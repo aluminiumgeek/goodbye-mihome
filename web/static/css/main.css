@@ -78,3 +78,18 @@ html, body {
     border-color: #ccc;
     opacity: .72;
 }
+
+.noty_message {
+    text-align: left!important;
+    font-size: 16px;
+}
+
+#noty_topRight_layout_container li {
+    margin-bottom: 15px;
+}
+
+.noty_message h3 {
+    font-size: 26px;
+    margin-top: 0;
+    margin-bottom: 5px;
+}

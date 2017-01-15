@@ -31,6 +31,7 @@
         </div>
         <script src='/static/js/jquery-3.1.1.min.js' type='text/javascript'></script>
         <script src="/static/js/jquery.backstretch.min.js" type='text/javascript'></script>
+        <script src='/static/js/jquery.noty.min.js' type='text/javascript'></script>
         <script src='/static/js/spectrum.js' type='text/javascript'></script>
         <script src='/static/js/chart.min.js' type='text/javascript'></script>
         <script src='/static/js/main.js' type='text/javascript'></script>
@@ -41,6 +42,7 @@
             var sensors_data = {% raw json_encode(sensors_data) %};
             var sensors_current = {% raw json_encode(sensors_current) %};
             var gateway_led = {% raw json_encode(gateway_led) %};
+            var notifications = {% raw json_encode(notifications) %};
         </script>
     </body>
  </html>

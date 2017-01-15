@@ -5,7 +5,7 @@ Break into API of smart home products from Xiaomi and wrap sensors data to cozy 
 ###Currently supported devices###
 
 - Temperature and humidity sensor: collect data, show current value and line charts
-- Gateway LED: change color, set brightness, toggle status
+- Gateway LED: change color, set brightness, toggle status, show current value
 
 The list will expand as I receive more Xiaomi devices and make plugins for them. Feel free to write your plugins if you have other devices/sensors.
 
