@@ -28,7 +28,8 @@ def run(store, conn, cursor):
         try:
             page = pq(url)
         except:  # it will be a connection error or something like that anyway
-            sleep()
+            sleep(10)
+            continue
         if AREA in str(page).lower():
             for el in page('.susp-table .bwm-post.post').items():
                 region, location, customers, date, time_from, time_to = [el('div').eq(i).text() for i in range(6)]
@@ -47,8 +48,8 @@ def run(store, conn, cursor):
         sleep()
 
 
-def sleep():
-    time.sleep(60 * 60)  # once an hour
+def sleep(delay=60 * 60):
+    time.sleep(delay)
 
 
 def add_to_parsed(store, info):
@@ -84,15 +85,15 @@ def blink(store):
 
     check_time = time.time()
     brightness_before, color_before, _ = gateway_led.get_status()
+    gateway_led.set_rgb('FFFF0000', False)
     while True:
         if time.time() - check_time > 2:
             if is_notification_shown():
                 break
             check_time = time.time()
 
-        gateway_led.set_rgb('FFFF0000', False)
         gateway_led.toggle()
-        time.sleep(1)
+        sleep(1)
 
     # Stop blinking, release LED and set previous brightness and color
     gateway_led.unblock()
