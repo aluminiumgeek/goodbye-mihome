@@ -1,3 +1,4 @@
+import json
 import time
 from threading import Thread
 from pyquery import PyQuery as pq
@@ -5,6 +6,7 @@ from pyquery import PyQuery as pq
 from plugins import gateway_led
 from utils import Notifications
 
+STORE_KEY = 'energo_pro_outage'
 BLINKING_STORE_KEY = 'energo_pro_outage_blinking'
 NOTIFICATION_TITLE = 'Electricity outage'
 AREA = 'batumi'
@@ -30,7 +32,10 @@ def run(store, conn, cursor):
         if AREA in str(page).lower():
             for el in page('.susp-table .bwm-post.post').items():
                 region, location, customers, date, time_from, time_to = [el('div').eq(i).text() for i in range(6)]
+
                 if AREA in region.lower() or AREA in location.lower():
+                    if not add_to_parsed(store, el.text()):
+                        continue
                     text = '<b>Location</b>: {}, {}<br/><b>When</b>: {}, from {} to {}<br/>'.format(region, location, date, time_from, time_to)
                     if not is_notification_exists(text):
                         Notifications.add('error', NOTIFICATION_TITLE, text)
@@ -43,7 +48,21 @@ def run(store, conn, cursor):
 
 
 def sleep():
-    time.sleep(60 * 60) # once an hour
+    time.sleep(60 * 60)  # once an hour
+
+
+def add_to_parsed(store, info):
+    """
+    Save power outage info.
+    Returns True if info added; False if this info already stored
+    """
+    stored = store.get(STORE_KEY)
+    parsed = json.loads(stored.decode() if stored else '[]')
+    if info in parsed:
+        return False
+    parsed.append(info)
+    store.set(STORE_KEY, json.dumps(parsed))
+    return True
 
 
 def is_notification_exists(text):
