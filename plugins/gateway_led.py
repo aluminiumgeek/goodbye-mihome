@@ -44,9 +44,11 @@ def set_brightness(level):
     set_rgb(rgb)
 
 
-def set_rgb(rgb):
-    store.delete(STORE_KEY + 'off')
+def set_rgb(rgb, send=True):
     store.set(STORE_KEY, rgb)
+    if not send or is_blocked():
+        return
+    store.delete(STORE_KEY + 'off')
     command = get_base_command()
     command['data']['rgb'] = int(rgb, 16)
     send_command(command)
@@ -56,9 +58,23 @@ def toggle():
     command = get_base_command()
     if store.get(STORE_KEY + 'off'):
         store.delete(STORE_KEY + 'off')
-        rgb = store.get(STORE_KEY) or 'ff000000'
+        rgb = store.get(STORE_KEY) or '99ffffff'
         command['data']['rgb'] = int(rgb, 16)
     else:
         store.set(STORE_KEY + 'off', 1)
         command['data']['rgb'] = 0
     send_command(command)
+
+
+def block():
+    """Prevent LED from changing"""
+    store.set(STORE_KEY + 'block', 1)
+
+
+def unblock():
+    """Release block"""
+    store.delete(STORE_KEY + 'block')
+
+
+def is_blocked():
+    return store.get(STORE_KEY + 'block')

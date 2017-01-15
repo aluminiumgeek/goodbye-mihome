@@ -22,7 +22,7 @@ The list will expand as I receive more Xiaomi devices and make plugins for them.
 
 ###Apps###
 
-Besides displaying sensors and devices data and change settings from the web interface, you could write some useful apps using Goodbye-MiHome. For example, you could parse your electricity supplier's website and start red LED blinking on the gateway when there's a news about upcoming electricity suspension in your area.
+Besides displaying sensors and devices data and change settings from the web interface, you could write some useful apps using Goodbye-MiHome. For example, you could parse your electricity supplier's website and start red LED blinking on the gateway when there's a news about upcoming power outage in your area.
 
 Some sample apps could be found in `apps` directory.
 
