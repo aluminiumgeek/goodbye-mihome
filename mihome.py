@@ -1,9 +1,12 @@
 import binascii
+import code
 import importlib
 import json
 import psycopg2
+import readline
 import socket
 import struct
+import sys
 import time
 from Crypto.Cipher import AES
 from datetime import datetime
@@ -83,6 +86,13 @@ def get_key():
 
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'shell':
+        vars = globals().copy()
+        vars.update(locals())
+        shell = code.InteractiveConsole(vars)
+        shell.interact()
+        sys.exit()
+
     Thread(target=web_app).start()
 
     for app_name in config.ENABLED_APPS:
