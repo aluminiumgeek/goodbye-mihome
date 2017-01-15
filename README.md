@@ -16,12 +16,13 @@ The list will expand as I receive more Xiaomi devices and make plugins for them.
 3. Create a PostgreSQL database and import `init.sql`
 4. Install required python packages: `pip install -r requirements.txt`
 4. Copy `config.py.example` to `config.py` and fill it with your settings
-5. Run `python mihome.py` to start data collector, web application and load apps defined in `ENABLED_APPS`
+5. Run `python mihome.py` to start data collector, web application and load apps defined in `ENABLED_APPS`.  
+   Additionally, run `python mihome.py shell` to start interactive intepreter (useful to test commands).
 
 
 ###Apps###
 
-Besides displaying sensors and devices data and change settings from the web interface, you could write some useful apps using Goodbye-MiHome. For example, you could parse your electricity supplier website and start red LED blinking on you gateway when there's a news about upcoming electricity suspension in your area.
+Besides displaying sensors and devices data and change settings from the web interface, you could write some useful apps using Goodbye-MiHome. For example, you could parse your electricity supplier's website and start red LED blinking on the gateway when there's a news about upcoming electricity suspension in your area.
 
 Some sample apps could be found in `apps` directory.
 
