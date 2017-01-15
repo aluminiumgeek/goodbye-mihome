@@ -25,8 +25,11 @@ def process(store, message, data):
                 store.set(LED_STORE_KEY + 'off', 1)
                 push_data.update(status='off')
             else:
-                hex_rgb = hex(data.get('rgb'))
-                store.set(LED_STORE_KEY, hex_rgb[2:])
-                push_data.update(brightness=hex_rgb[2:4], color=hex_rgb[4:])
+                store.delete(LED_STORE_KEY + 'off')
+                hex_rgb = hex(data.get('rgb'))[2:]
+                if len(hex_rgb) == 7:
+                    hex_rgb = '0' + hex_rgb
+                store.set(LED_STORE_KEY, hex_rgb)
+                push_data.update(brightness=hex_rgb[:2], color=hex_rgb[2:])
 
             UpdatesHandler.send_updates(push_data)

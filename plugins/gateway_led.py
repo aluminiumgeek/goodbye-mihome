@@ -33,10 +33,7 @@ def set_color(code):
     if len(value) > 1:
         brightness = value[:2]
     rgb = brightness.decode() + code
-    store.set(STORE_KEY, rgb)
-    command = get_base_command()
-    command['data']['rgb'] = int(rgb, 16)
-    send_command(command)
+    set_rgb(rgb)
 
 
 def set_brightness(level):
@@ -44,13 +41,11 @@ def set_brightness(level):
     if len(value) > 1:
         color = value[2:]
     rgb = level + color.decode()
-    store.set(STORE_KEY, rgb)
-    command = get_base_command()
-    command['data']['rgb'] = int(rgb, 16)
-    send_command(command)
+    set_rgb(rgb)
 
 
 def set_rgb(rgb):
+    store.delete(STORE_KEY + 'off')
     store.set(STORE_KEY, rgb)
     command = get_base_command()
     command['data']['rgb'] = int(rgb, 16)
