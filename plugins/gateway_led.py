@@ -45,6 +45,10 @@ def set_brightness(level):
 
 
 def set_rgb(rgb, send=True):
+    brightness, color = rgb[:2], rgb[2:]
+    if int(brightness, 16) > 100:
+        brightness = '64'
+    rgb = brightness + color
     store.set(STORE_KEY, rgb)
     if not send or is_blocked():
         return

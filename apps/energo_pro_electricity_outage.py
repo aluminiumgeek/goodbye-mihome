@@ -91,12 +91,12 @@ def blink(store):
                 break
             check_time = time.time()
 
-        gateway_led.set_rgb('FFFF0000', False)
+        gateway_led.set_rgb('55FF0000', False)
         gateway_led.toggle()
         sleep(1)
 
     # Stop blinking, release LED and set previous brightness and color
     gateway_led.unblock()
     argb = brightness_before + color_before
-    gateway_led.set_rgb(argb if argb != 'FFFF0000' else '5500FF00')
+    gateway_led.set_rgb(argb if argb != '55FF0000' else '5500FF00')
     store.delete(BLINKING_STORE_KEY)

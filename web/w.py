@@ -71,7 +71,7 @@ class MainHandler(tornado.web.RequestHandler):
             sensors_data=sensors_data,
             bg_images=bg_images,
             gateway_led={
-                'brightness': brightness,
+                'brightness': hex(int(int(brightness, 16) / 100))[2:],
                 'color': color,
                 'status': status
             },

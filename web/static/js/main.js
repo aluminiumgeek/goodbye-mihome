@@ -104,8 +104,13 @@
                     $('.gateway-block span').addClass('off');
                 }
                 if (data.brightness && data.color) {
+                    var brightness = parseInt(data.brightness, 16) * 255 / 100;
+                    brightness = Math.floor(brightness).toString(16);
+                    if (brightness.length == 1) {
+                        brightness = '0' + brightness;
+                    }
                     $('.gateway-block span').removeClass('off');
-                    $("#color").spectrum("set", data.brightness + data.color);
+                    $("#color").spectrum("set", brightness + data.color);
                 }
             }
 
@@ -126,7 +131,7 @@
             change: function(data) {
                 var color = data.toHexString();
                 var alpha = data.getAlpha();
-                var brightness = Math.floor(alpha * 255);
+                var brightness = Math.floor(alpha * 100);
                 var updatesSocket = get_ws();
                 var brightness = brightness.toString(16);
                 if (brightness.length == 1) {
@@ -135,7 +140,7 @@
                 updatesSocket.send(JSON.stringify({
                     device: 'gateway_led',
                     command: 'rgb',
-                    value: brightness.toString(16) + color
+                    value: brightness + color
                 }));
             }
         });
