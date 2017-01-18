@@ -85,13 +85,13 @@ def blink(store):
 
     check_time = time.time()
     brightness_before, color_before, _ = gateway_led.get_status()
-    gateway_led.set_rgb('FFFF0000', False)
     while True:
         if time.time() - check_time > 2:
             if is_notification_shown():
                 break
             check_time = time.time()
 
+        gateway_led.set_rgb('FFFF0000', False)
         gateway_led.toggle()
         sleep(1)
 
