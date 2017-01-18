@@ -64,6 +64,7 @@ class MainHandler(tornado.web.RequestHandler):
         bg_images = list(filter(lambda x: x.endswith('.jpg'), bg_images))
 
         brightness, color, status = gateway_led.get_status()
+        brightness = int(brightness, 16) / 100
         self.render(
             "templates/index.html",
             sensors=config.SENSORS,
@@ -71,7 +72,7 @@ class MainHandler(tornado.web.RequestHandler):
             sensors_data=sensors_data,
             bg_images=bg_images,
             gateway_led={
-                'brightness': hex(int(int(brightness, 16) / 100))[2:],
+                'brightness': hex(int(brightness*100))[2:],
                 'color': color,
                 'status': status
             },

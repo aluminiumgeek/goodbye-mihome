@@ -124,6 +124,9 @@
             }
         }
 
+        if (gateway_led.brightness.length == 1) {
+            gateway_led.brightness = '0' + gateway_led.brightness;
+        }
         $("#color").spectrum({
             color: gateway_led.brightness + gateway_led.color,
             chooseText: "Set LED color",
