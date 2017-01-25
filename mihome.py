@@ -14,26 +14,29 @@ from threading import Thread
 from redis import Redis
 
 import config
-from plugins import sensor_ht, gateway
+from plugins import sensor_ht, gateway, yeelight
 from web.w import run_app as web_app
 
 conn = psycopg2.connect("dbname={} user={} password={}".format(config.DBNAME, config.DBUSER, config.DBPASS))
 cursor = conn.cursor()
 store = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB)
- 
-MULTICAST_PORT = 9898
- 
-MULTICAST_ADDRESS = '224.0.0.50'
+
+MULTICAST = {
+    'mihome': ('224.0.0.50', 9898),
+    'yeelight': ('239.255.255.250', 1982)
+}
 SOCKET_BUFSIZE = 1024
 
 IV = bytes([0x17, 0x99, 0x6d, 0x09, 0x3d, 0x28, 0xdd, 0xb3, 0xba, 0x69, 0x5a, 0x2e, 0x6f, 0x58, 0x56, 0x2e])
 
 
-def receiver():
+def receiver(service='mihome'):
+    assert service in MULTICAST, 'No such service'
+    address, port = MULTICAST.get(service)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind(("0.0.0.0", MULTICAST_PORT))
+    sock.bind(("0.0.0.0", port))
  
-    mreq = struct.pack("=4sl", socket.inet_aton(MULTICAST_ADDRESS), socket.INADDR_ANY)
+    mreq = struct.pack("=4sl", socket.inet_aton(address), socket.INADDR_ANY)
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, SOCKET_BUFSIZE)
@@ -45,16 +48,21 @@ def receiver():
         data, (addr, _) = sock.recvfrom(SOCKET_BUFSIZE)  # buffer size is 1024 bytes
         store.set('gateway_addr', addr)
         print(datetime.now().isoformat(), data)
-        message = json.loads(data.decode())
-        data = json.loads(message['data'])
-        if message.get('model') == 'sensor_ht' and not sensor_ht.process(conn, cursor, current, message, data):
-            continue
-        elif message.get('model') == 'gateway':
-            gateway.process(store, message, data)
-        current = {}
+        if service == 'mihome':
+            message = json.loads(data.decode())
+            data = json.loads(message['data'])
+            if message.get('model') == 'sensor_ht' and not sensor_ht.process(conn, cursor, current, message, data):
+                continue
+            elif message.get('model') == 'gateway':
+                gateway.process(store, message, data)
+            current = {}
+        elif service == 'yeelight':
+            yeelight.process(store, data.decode())
 
 
-def send_command(command):
+def send_command(command, service='mihome'):
+    assert service in MULTICAST, 'No such service'
+    _, port = MULTICAST.get(service)
     if isinstance(command.get('data'), dict):
         command['data'] = json.dumps(command['data'])
     gateway_addr = store.get('gateway_addr')
@@ -62,10 +70,14 @@ def send_command(command):
         print("Doesn't receive any heartbeat from gateway. Delaying request for 10 seconds.")
         time.sleep(10)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.connect((gateway_addr, MULTICAST_PORT))
+    sock.connect((gateway_addr, port))
     sock.send(json.dumps(command).encode('ascii'))
-    data, addr = sock.recvfrom(SOCKET_BUFSIZE)
-    sock.close()
+    try:
+        data, addr = sock.recvfrom(SOCKET_BUFSIZE)
+    except ConnectionRefusedError:
+        data = None
+    finally:
+        sock.close()
     return data
 
 
@@ -95,4 +107,8 @@ if __name__ == '__main__':
         kwargs = {'store': store, 'conn': conn, 'cursor': cursor}
         Thread(target=app.run, kwargs=kwargs).start()
 
-    receiver()
+    for service in MULTICAST:
+        Thread(target=receiver, args=(service,)).start()
+
+    # Discover Yeelight bulbs
+    yeelight.discover(store)
