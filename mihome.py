@@ -11,15 +11,14 @@ import time
 from Crypto.Cipher import AES
 from datetime import datetime
 from threading import Thread
-from redis import Redis
 
 import config
 from plugins import sensor_ht, gateway, yeelight
+from utils import get_store
 from web.w import run_app as web_app
 
 conn = psycopg2.connect("dbname={} user={} password={}".format(config.DBNAME, config.DBUSER, config.DBPASS))
 cursor = conn.cursor()
-store = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB)
 
 MULTICAST = {
     'mihome': ('224.0.0.50', 9898),
@@ -32,6 +31,7 @@ IV = bytes([0x17, 0x99, 0x6d, 0x09, 0x3d, 0x28, 0xdd, 0xb3, 0xba, 0x69, 0x5a, 0x
 
 def receiver(service='mihome'):
     assert service in MULTICAST, 'No such service'
+    store = get_store()
     address, port = MULTICAST.get(service)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("0.0.0.0", port))
@@ -57,7 +57,7 @@ def receiver(service='mihome'):
                 gateway.process(store, message, data)
             current = {}
         elif service == 'yeelight':
-            yeelight.process(store, data.decode())
+            yeelight.process(data.decode())
 
 
 def send_command(command, service='mihome'):
@@ -65,7 +65,7 @@ def send_command(command, service='mihome'):
     _, port = MULTICAST.get(service)
     if isinstance(command.get('data'), dict):
         command['data'] = json.dumps(command['data'])
-    gateway_addr = store.get('gateway_addr')
+    gateway_addr = get_store().get('gateway_addr')
     if gateway_addr is None:
         print("Doesn't receive any heartbeat from gateway. Delaying request for 10 seconds.")
         time.sleep(10)
@@ -84,7 +84,7 @@ def send_command(command, service='mihome'):
 def get_key():
     """Get current gateway key"""
     cipher = AES.new(config.MIHOME_GATEWAY_PASSWORD, AES.MODE_CBC, IV)
-    encrypted = cipher.encrypt(store.get('gateway_token'))
+    encrypted = cipher.encrypt(get_store().get('gateway_token'))
     return binascii.hexlify(encrypted)
 
 
@@ -104,11 +104,11 @@ if __name__ == '__main__':
         except ImportError as e:
             print('Could not import app "{}": {}'.format(app_name, e))
             continue
-        kwargs = {'store': store, 'conn': conn, 'cursor': cursor}
+        kwargs = {'store': get_store(), 'conn': conn, 'cursor': cursor}
         Thread(target=app.run, kwargs=kwargs).start()
 
     for service in MULTICAST:
         Thread(target=receiver, args=(service,)).start()
 
     # Discover Yeelight bulbs
-    yeelight.discover(store)
+    yeelight.discover()

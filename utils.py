@@ -4,6 +4,8 @@ from redis import Redis
 
 import config
 
+store = None
+
 
 def format_value(value, split=False):
     result = str(int(value)/100.0)
@@ -12,9 +14,16 @@ def format_value(value, split=False):
     return result
 
 
+def get_store():
+    global store
+    if store is None:
+        store = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB)
+    return store
+
+
 class Notifications:
     STORE_KEY = 'mihome_notifications'
-    store = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB)
+    store = get_store()
 
     @staticmethod
     def list():

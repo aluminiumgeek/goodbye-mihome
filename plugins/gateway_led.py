@@ -3,10 +3,12 @@ import os
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from mihome import store, get_key, send_command
+from mihome import get_key, send_command
+from utils import get_store
 
 DEVICE = 'gateway_led'
 STORE_KEY = 'gateway_led_value'
+store = get_store()
 
 
 def get_base_command():
