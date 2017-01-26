@@ -60,17 +60,16 @@ def receiver(service='mihome'):
             yeelight.process(data.decode())
 
 
-def send_command(command, service='mihome'):
-    assert service in MULTICAST, 'No such service'
-    _, port = MULTICAST.get(service)
+def send_command(command):
+    _, port = MULTICAST.get('mihome')
     if isinstance(command.get('data'), dict):
         command['data'] = json.dumps(command['data'])
-    gateway_addr = get_store().get('gateway_addr')
-    if gateway_addr is None:
+    address = get_store().get('gateway_addr')
+    if address is None:
         print("Doesn't receive any heartbeat from gateway. Delaying request for 10 seconds.")
         time.sleep(10)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.connect((gateway_addr, port))
+    sock.connect((address, port))
     sock.send(json.dumps(command).encode('ascii'))
     try:
         data, addr = sock.recvfrom(SOCKET_BUFSIZE)
