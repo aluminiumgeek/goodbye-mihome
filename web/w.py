@@ -23,7 +23,7 @@ def get_cursor():
 class MainHandler(tornado.web.RequestHandler):
 
     def get(self):
-        from plugins import gateway_led
+        from plugins import gateway_led, yeelight
 
         cursor = get_cursor()
         cursor.execute('SELECT DISTINCT ON (sid) sid, temperature, humidity FROM ht ORDER BY sid, dt DESC')
@@ -65,6 +65,7 @@ class MainHandler(tornado.web.RequestHandler):
 
         brightness, color, status = gateway_led.get_status()
         brightness = int(brightness, 16) / 100
+
         self.render(
             "templates/index.html",
             sensors=config.SENSORS,
@@ -76,6 +77,7 @@ class MainHandler(tornado.web.RequestHandler):
                 'color': color,
                 'status': status
             },
+            bulbs=yeelight.get_devices(),
             notifications=Notifications.list()
         )
 
@@ -87,11 +89,12 @@ class UpdatesHandler(tornado.websocket.WebSocketHandler):
         self.socket_clients.add(self)
 
     def on_message(self, message):
-        from plugins import gateway_led
+        from plugins import gateway_led, yeelight
 
         message = json.loads(message)
-        if message.get('device') == gateway_led.DEVICE:
-            command = message.get('command')
+        device = message.get('device')
+        command = message.get('command')
+        if device == gateway_led.DEVICE:
             if command == 'color':
                 value = message['value'].replace('#', '')
                 gateway_led.set_color(value)
@@ -104,6 +107,13 @@ class UpdatesHandler(tornado.websocket.WebSocketHandler):
             elif command == 'toggle':
                 gateway_led.toggle()
             self.write_message({'device': gateway_led.DEVICE, 'return': 'ok'})
+        elif device == yeelight.DEVICE:
+            if command == 'set_power':
+                yeelight.set_power(message['power'], device_id=message['id'])
+            elif command == 'set_name':
+                yeelight.set_name(message['name'], device_id=message['id'])
+            self.write_message({'device': yeelight.DEVICE, 'return': 'ok'})
+
         if message.get('kind') == 'notification':
             if message.get('command') == 'read':
                 Notifications.remove(message.get('uuid'))

@@ -16,6 +16,7 @@ from web.w import UpdatesHandler
 from utils import get_store
 
 STORE_KEY = 'yeelight'
+DEVICE = 'yeelight'
 YEE_DISCOVER = [
     'M-SEARCH * HTTP/1.1',
     'MAN: "ssdp:discover"',
@@ -137,6 +138,16 @@ def set_adjust(action, prop, device_id=None):
     }, device_id)
 
 
+def set_name(name, device_id=None):
+    """
+    Set name for a smart LED.
+    """
+    return send_command({
+        'method': 'set_name',
+        'params': [name]
+    }, device_id)
+
+
 def process(data):
     data = get_data(data)
     if 'id' not in data:
@@ -186,7 +197,6 @@ def send_command(command, device_id=None):
     """
     Send command to a bulb. If no bulb id specified, send command to all smart LED bulbs
     """
-
     devices = get_devices()
     if device_id is not None:
         devices = filter(lambda x: x['id'] == device_id, devices)
@@ -194,11 +204,16 @@ def send_command(command, device_id=None):
     for device in devices:
         command.update(id=device['id'])
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(3)
         address, port = device['Location'].replace('yeelight://', '').split(':')
         s.connect((address, int(port)))
         s.send(json.dumps(command).encode('ascii') + b'\r\n')
         data = {}
-        for _ in range(2):  # bulb returns two messages: status and props
+        if command.get('method') in ['set_name']:
+            messages_count = 1
+        else:
+            messages_count = 2
+        for _ in range(messages_count):  # bulb returns two messages: status and props
             data.update(json.loads(s.recv(1024).decode()))
         s.close()
         data.update(id=device['id'])

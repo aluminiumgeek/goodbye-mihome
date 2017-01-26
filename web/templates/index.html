@@ -7,6 +7,8 @@
        <link href="/static/css/bootstrap.css" rel="stylesheet">
        <link href="/static/css/main.css" rel="stylesheet">
        <link href="/static/css/spectrum.css" rel="stylesheet">
+       <link href="/static/css/bootstrap-toggle.css" rel="stylesheet">
+       <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     </head>
     <body>
         <div class='gateway-block' title='Gateway LED Color'>
@@ -28,10 +30,31 @@
                 </div>
                 {% end %}
             </div>
+            {% if bulbs %}
+            <div class='row yee'>
+                <div class='col-md-12'>
+                    <div class='wrapper'>
+                        {% for bulb in bulbs %}
+                        <div id='{{ bulb["id"] }}' class='bulb'>
+                            <span>
+                                <i class='fa fa-lightbulb-o {{ bulb["power"] }}'></i> {{ bulb['name'] or bulb['id'] }}
+                            </span>
+                            <ul class='dropdown-menu' data-id='{{ bulb["id"] }}'>
+                                <li><input type="checkbox" {{ 'checked' if bulb['power'] == 'on' else '' }} data-toggle="toggle" data-action="set_power" name="switch" /></li>
+                                <li><input name="name" data-action="set_name" type="text" value="{{ bulb['name'] }}" placeholder="Device name" /></li>
+                            </ul>
+                        </div>
+                        {% end %}
+                    </div>
+                </div>
+            </div>
+            {% end %}
         </div>
         <script src='/static/js/vendor/jquery-3.1.1.min.js' type='text/javascript'></script>
         <script src="/static/js/vendor/jquery.backstretch.min.js" type='text/javascript'></script>
         <script src='/static/js/vendor/jquery.noty.min.js' type='text/javascript'></script>
+        <script src='/static/js/vendor/bootstrap.js' type='text/javascript'></script>
+        <script src='/static/js/vendor/bootstrap-toggle.min.js' type='text/javascript'></script>
         <script src='/static/js/vendor/spectrum.js' type='text/javascript'></script>
         <script src='/static/js/vendor/chart.min.js' type='text/javascript'></script>
         <script src='/static/js/main.js' type='text/javascript'></script>

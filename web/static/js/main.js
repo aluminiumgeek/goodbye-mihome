@@ -167,5 +167,36 @@
         for (i in notifications) {
             show_notification(notifications[i].type, notifications[i].title, notifications[i].text, notifications[i].uuid);
         }
+        
+        $('.yee .bulb span').bind('click', function() {
+            $(this).parent().find('ul').toggleClass('open');
+        });
+
+        $('.yee .bulb input').change(function() {
+            var value;
+            var id = $(this).parents().find('ul').attr('data-id');
+            var updatesSocket = get_ws();
+            var control_name = $(this).attr('name')
+            data = {
+                device: 'yeelight',
+                id: id
+            }
+            if (control_name == 'switch') {
+                value = $(this).prop('checked');
+                $.extend(data, {
+                    command: 'set_power',
+                    power: value
+                });
+            }
+            else if (control_name == 'name') {
+                value = $(this).val();
+                $.extend(data, {
+                    command: 'set_name',
+                    name: value
+                });
+            }
+            console.log(data);
+            updatesSocket.send(JSON.stringify(data));
+        });
     });
 })(jQuery);
