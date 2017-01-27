@@ -35,7 +35,7 @@
             <div class='row yee'>
                 <div class='col-md-12'>
                     <div class='wrapper'>
-                        {% for bulb in bulbs * 4 %}
+                        {% for bulb in bulbs %}
                         <div id='{{ bulb["id"] }}' class='bulb' data-bright='{{ bulb["bright"] }}'>
                             <span>
                                 <i class='fa fa-lightbulb-o {{ bulb["power"] }}'></i> <span class='bulb-name'>{{ bulb['name'] or bulb['id'] }}</span>
