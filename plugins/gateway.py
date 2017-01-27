@@ -14,6 +14,7 @@ def process(store, message, data):
     if cmd == 'heartbeat':
         store.set('gateway_sid', sid)
         store.set('gateway_token', message.get('token'))
+        store.set('gateway_addr', data.get('ip'))
     elif cmd == 'report':
         if data.get('rgb') is not None:
             push_data = {

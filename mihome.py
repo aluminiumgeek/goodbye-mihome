@@ -45,8 +45,7 @@ def receiver(service='mihome'):
     current = {}
 
     while True:
-        data, (addr, _) = sock.recvfrom(SOCKET_BUFSIZE)  # buffer size is 1024 bytes
-        store.set('gateway_addr', addr)
+        data, _ = sock.recvfrom(SOCKET_BUFSIZE)  # buffer size is 1024 bytes
         print(datetime.now().isoformat(), data)
         if service == 'mihome':
             message = json.loads(data.decode())
