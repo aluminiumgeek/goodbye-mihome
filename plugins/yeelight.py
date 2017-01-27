@@ -2,7 +2,7 @@
 # Specification: http://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf
 #
 # Supported commands: toggle, set_power, set_bright, start_cf, stop_cf, set_scene,
-# cron_add, cron_get, cron_del, set_adjust, set_name.
+# cron_add, cron_get, cron_del, set_adjust, set_name, get_prop.
 #
 # Unsupported (feel free to implement something of this): set_ct_abx, set_rgb,
 # set_hsv, set_music.
@@ -148,6 +148,16 @@ def set_name(name, device_id=None):
     }, device_id)
 
 
+def get_prop(properties=['name', 'power', 'bright'], device_id=None):
+    """
+    Retrieve current properties of a smart LED.
+    """
+    return send_command({
+        'method': 'get_prop',
+        'params': properties
+    }, device_id)
+
+
 def process(data):
     data = get_data(data)
     if 'id' not in data:
@@ -208,15 +218,23 @@ def send_command(command, device_id=None):
         address, port = device['Location'].replace('yeelight://', '').split(':')
         s.connect((address, int(port)))
         s.send(json.dumps(command).encode('ascii') + b'\r\n')
-        data = {}
-        if command.get('method') in ['set_name']:
-            messages_count = 1
-        else:
-            messages_count = 2
-        for _ in range(messages_count):  # bulb returns two messages: status and props
-            data.update(json.loads(s.recv(1024).decode()))
+        result = json.loads(s.recv(1024).decode())
         s.close()
-        data.update(id=device['id'])
-        results.append(data)
+        result.update(id=device['id'])
+        results.append(result)
+
+        # Send updates to web
+        if command['method'] != 'get_prop':
+            props = get_prop(device_id=device['id'])
+            if props:
+                name, power, bright = props[0]['result']
+                data = {
+                    'device': DEVICE,
+                    'id': device['id'],
+                    'name': name,
+                    'power': power,
+                    'bright': bright
+                }
+                UpdatesHandler.send_updates(data)
 
     return results
