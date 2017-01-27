@@ -114,6 +114,13 @@
                 }
             }
 
+            if (data.device == 'yeelight' && data.id) {
+                var bulb = $('.bulb#' + data.id);
+                bulb.find('.bulb-name').text(data.name);
+                bulb.find('input[name=switch]').prop('checked', data.power == 'on');
+                bulb.find('i.fa').removeClass('on').removeClass('off').addClass(data.power);
+            }
+
             if (data.kind == 'notification') {
                 if (data.command == 'show') {
                     show_notification(data.type, data.title, data.text, data.uuid);
@@ -195,8 +202,27 @@
                     name: value
                 });
             }
-            console.log(data);
+            else if (control_name == 'bright') {
+                value = $(this).val();
+                $.extend(data, {
+                    command: 'set_bright',
+                    bright: value
+                })
+            }
             updatesSocket.send(JSON.stringify(data));
         });
+
+        $('.yee .bulb').each(function() {
+            $(this).find('input[name=bright]').bootstrapSlider({
+                min: 1,
+                max: 100,
+                step: 5,
+                value: $(this).attr('data-bright'),
+                formatter: function(value) {
+                    return 'Brightness: ' + value;
+                }
+            });
+        });
+
     });
 })(jQuery);

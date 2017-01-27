@@ -108,11 +108,20 @@ class UpdatesHandler(tornado.websocket.WebSocketHandler):
                 gateway_led.toggle()
             self.write_message({'device': gateway_led.DEVICE, 'return': 'ok'})
         elif device == yeelight.DEVICE:
+            return_result = 'ok'
             if command == 'set_power':
                 yeelight.set_power(message['power'], device_id=message['id'])
             elif command == 'set_name':
                 yeelight.set_name(message['name'], device_id=message['id'])
-            self.write_message({'device': yeelight.DEVICE, 'return': 'ok'})
+            elif command == 'set_bright':
+                yeelight.set_bright(message['bright'], device_id=message['id'])
+            else:
+                return_result = 'error'
+            data = {
+                'device': yeelight.DEVICE,
+                'return': return_result
+            }
+            self.write_message(data)
 
         if message.get('kind') == 'notification':
             if message.get('command') == 'read':

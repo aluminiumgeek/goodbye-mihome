@@ -55,7 +55,7 @@ def set_bright(brightness, effect='smooth', duration=500, device_id=None):
     """
     return send_command({
         'method': 'set_bright',
-        'params': [brightness, effect, duration]
+        'params': [int(brightness), effect, int(duration)]
     }, device_id)
 
 
@@ -102,7 +102,7 @@ def cron_add(state_type, value, device_id=None):
     """
     return send_command({
         'method': 'cron_add',
-        'params': [state_type, value]
+        'params': [int(state_type), value]
     }, device_id)
 
 
@@ -112,7 +112,7 @@ def cron_get(state_type, device_id=None):
     """
     return send_command({
         'method': 'cron_get',
-        'params': [state_type]
+        'params': [int(state_type)]
     }, device_id)
 
 
@@ -122,7 +122,7 @@ def cron_del(state_type, device_id=None):
     """
     return send_command({
         'method': 'cron_del',
-        'params': [state_type]
+        'params': [int(state_type)]
     }, device_id)
 
 
@@ -152,10 +152,17 @@ def get_prop(properties=['name', 'power', 'bright'], device_id=None):
     """
     Retrieve current properties of a smart LED.
     """
-    return send_command({
+    results = send_command({
         'method': 'get_prop',
         'params': properties
     }, device_id)
+
+    # Populate stored values
+    for device in results:
+        data = dict(zip(properties, device['result']))
+        update_device(data, device['id'])
+
+    return results
 
 
 def process(data):
@@ -178,7 +185,6 @@ def discover():
     
     while True:
         data, _ = yee_socket.recvfrom(SOCKET_BUFSIZE)
-        print(data)
         add_device(get_data(data.decode()))
 
 
@@ -193,6 +199,14 @@ def add_device(data):
         if device['id'] == data['id']:
             devices.pop(i)
     devices.append(data)
+    store.set(STORE_KEY, json.dumps(devices))
+
+
+def update_device(data, device_id):
+    devices = get_devices()
+    for i, device in enumerate(devices[:]):
+        if device['id'] == device_id:
+            devices[i].update(data)
     store.set(STORE_KEY, json.dumps(devices))
 
 
