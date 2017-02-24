@@ -59,7 +59,7 @@ def receiver(service='mihome'):
             yeelight.process(data.decode())
 
 
-def send_command(command):
+def send_command(command, timeout=10):
     _, port = MULTICAST.get('mihome')
     if isinstance(command.get('data'), dict):
         command['data'] = json.dumps(command['data'])
@@ -68,12 +68,16 @@ def send_command(command):
         print("Doesn't receive any heartbeat from gateway. Delaying request for 10 seconds.")
         time.sleep(10)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.settimeout(timeout)
     sock.connect((address, port))
     sock.send(json.dumps(command).encode('ascii'))
+    data = None
     try:
         data, addr = sock.recvfrom(SOCKET_BUFSIZE)
     except ConnectionRefusedError:
-        data = None
+        print("send_command :: recvfrom() connection refused: {}:{}".format(address.decode(), port))
+    except socket.timeout:
+        print("send_command :: recvfrom() timed out: {}:{}".format(address.decode(), port))
     finally:
         sock.close()
     return data
@@ -104,6 +108,7 @@ if __name__ == '__main__':
             continue
         kwargs = {'store': get_store(), 'conn': conn, 'cursor': cursor}
         Thread(target=app.run, kwargs=kwargs).start()
+        print('Loaded app: {}'.format(app_name))
 
     for service in MULTICAST:
         Thread(target=receiver, args=(service,)).start()
