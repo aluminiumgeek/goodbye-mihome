@@ -13,7 +13,7 @@ from datetime import datetime
 from threading import Thread
 
 import config
-from plugins import sensor_ht, gateway, yeelight
+from plugins import sensor_ht, yeelight
 from utils import get_store
 from web.w import run_app as web_app
 
@@ -30,6 +30,8 @@ IV = bytes([0x17, 0x99, 0x6d, 0x09, 0x3d, 0x28, 0xdd, 0xb3, 0xba, 0x69, 0x5a, 0x
 
 
 def receiver(service='mihome'):
+    from plugins import gateway
+
     assert service in MULTICAST, 'No such service'
     store = get_store()
     address, port = MULTICAST.get(service)
