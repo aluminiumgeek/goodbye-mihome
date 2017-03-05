@@ -26,12 +26,13 @@ def get_base_command():
 
 def get_status():
     """Returns brigthness (hex), color (hex), status (on/off)"""
-    value = store.get(STORE_KEY) or '33ff4455'
+    value = store.get(STORE_KEY) or b'33ff4455'
     return value[:2].decode(), value[2:].decode(), not store.get(STORE_KEY + 'off')
 
 
 def set_color(code):
     value = store.get(STORE_KEY) or '0'
+    brightness = b'64'
     if len(value) > 1:
         brightness = value[:2]
     rgb = brightness.decode() + code
@@ -40,6 +41,7 @@ def set_color(code):
 
 def set_brightness(level):
     value = store.get(STORE_KEY) or '0'
+    color = b'ffffff'
     if len(value) > 1:
         color = value[2:]
     rgb = level + color.decode()
