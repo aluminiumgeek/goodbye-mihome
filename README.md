@@ -3,7 +3,7 @@
 Break into API of smart home products from Xiaomi and wrap sensors data to cozy web interface.
 
 If you like this project, you might want to buy me a cup of coffee :)  
-[![](https://cloud.githubusercontent.com/assets/840753/23658304/6ac22b4c-035b-11e7-978d-79392dc65143.gif)](https://www.paypal.com/us/cgi-bin/webscr?cmd=_flow&SESSION=7xHHqocRN6jRdcrlTBhM9jhQzsRYW8Q7z-VZTvOpN-XkPM604ayD43G3nUy&dispatch=5885d80a13c0db1f8e263663d3faee8d94717bd303200c3af9aadd01a5f55080)
+[![](https://cloud.githubusercontent.com/assets/840753/23658304/6ac22b4c-035b-11e7-978d-79392dc65143.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=G8NJ4AKLEZRBE&lc=US&item_name=aluminiumgeek&item_number=goodbye%2dmihome&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedd3faee8d94717bd303200c3af9aadd01a5f55080)
 
 
 ###Currently supported devices###
