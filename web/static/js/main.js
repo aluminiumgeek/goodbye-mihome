@@ -181,32 +181,33 @@
 
         $('.yee .bulb input').change(function() {
             var value;
-            var id = $(this).parents().find('ul').attr('data-id');
             var updatesSocket = get_ws();
             var control_name = $(this).attr('name')
             data = {
-                device: 'yeelight',
-                id: id
+                device: 'yeelight'
             }
             if (control_name == 'switch') {
                 value = $(this).prop('checked');
                 $.extend(data, {
                     command: 'set_power',
-                    power: value
+                    power: value,
+                    id: $(this).parents().eq(2).data('id')
                 });
             }
             else if (control_name == 'name') {
                 value = $(this).val();
                 $.extend(data, {
                     command: 'set_name',
-                    name: value
+                    name: value,
+                    id: $(this).parents().eq(1).data('id')
                 });
             }
             else if (control_name == 'bright') {
                 value = $(this).val();
                 $.extend(data, {
                     command: 'set_bright',
-                    bright: value
+                    bright: value,
+                    id: $(this).parents().eq(1).data('id')
                 })
             }
             updatesSocket.send(JSON.stringify(data));
