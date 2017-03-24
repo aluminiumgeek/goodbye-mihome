@@ -1,4 +1,4 @@
-#Goodbye MiHome#
+# Goodbye MiHome
 
 Break into API of smart home products from Xiaomi and wrap sensors data to cozy web interface.
 
@@ -6,7 +6,7 @@ If you like this project, you might want to buy me a cup of coffee :)
 [![](https://cloud.githubusercontent.com/assets/840753/23658304/6ac22b4c-035b-11e7-978d-79392dc65143.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=G8NJ4AKLEZRBE&lc=US&item_name=aluminiumgeek&item_number=goodbye%2dmihome&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedd3faee8d94717bd303200c3af9aadd01a5f55080)
 
 
-###Currently supported devices###
+### Currently supported devices
 
 - Temperature and humidity sensor: collect data, show current value and line charts.
 - Gateway LED: change color, set brightness, toggle status, show current value.
@@ -14,7 +14,7 @@ If you like this project, you might want to buy me a cup of coffee :)
 
 The list will expand as I receive more Xiaomi devices and make plugins for them. Feel free to write your plugins if you have other devices/sensors.
 
-###Setup and running###
+### Setup and running
 
 1. Ensure you have Python 3, PostgreSQL, Redis installed.
 2. Clone the repo
@@ -25,7 +25,7 @@ The list will expand as I receive more Xiaomi devices and make plugins for them.
    Additionally, run `python mihome.py shell` to start interactive intepreter (useful to test commands).
 
 
-###Apps###
+### Apps
 
 Besides displaying sensors and devices data and change settings from the web interface, you could write some useful apps using Goodbye-MiHome. For example, you could parse your electricity supplier's website and start red LED blinking on the gateway when there's a news about upcoming power outage in your area.
 
@@ -33,7 +33,7 @@ Some sample apps could be found in `apps` directory.
 
 You could enable or disable an app by changing `ENABLED_APPS` section in `config.py`
 
-###Background images for web interface###
+### Background images for web interface
 
 To make web interface even better, you could put your favorite images into `web/static/img/bg/` directory. Background image changes every 5 minutes (hovewer, you could tweak the interval in js file).
 
