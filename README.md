@@ -10,6 +10,7 @@ If you like this project, you might want to buy me a cup of coffee :)
 
 - Temperature and humidity sensor: collect data, show current value and line charts.
 - Gateway LED: change color, set brightness, toggle status, show current value.
+- Gateway Speaker: play standard and user-defined (uploaded via MiHome app) sounds with custom volume, interrupt playing.
 - Yeelight smart LED bulbs: toggle status, set brightness, set name, create scenes, manage cron jobs.
 
 The list will expand as I receive more Xiaomi devices and make plugins for them. Feel free to write your plugins if you have other devices/sensors.
