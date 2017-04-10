@@ -3,7 +3,7 @@ import time
 from threading import Thread
 from pyquery import PyQuery as pq
 
-from plugins import gateway_led
+from plugins import gateway_led, gateway_speaker
 from utils import Notifications
 
 STORE_KEY = 'energo_pro_outage'
@@ -40,6 +40,7 @@ def run(store, conn, cursor):
                     text = '<b>Location</b>: {}, {}<br/><b>When</b>: {}, from {} to {}<br/>'.format(region, location, date, time_from, time_to)
                     if not is_notification_exists(text):
                         Notifications.add('error', NOTIFICATION_TITLE, text)
+                        gateway_speaker.play(10008, 5)
 
                     if not store.get(BLINKING_STORE_KEY):
                         Thread(target=blink, args=(store,)).start()
