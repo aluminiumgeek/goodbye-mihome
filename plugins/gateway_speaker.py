@@ -17,8 +17,9 @@ def get_base_command():
 
 def play(sound_id, volume=20):
     """
-    sound_id: 0-8, 10, 13, 20-29 - standard ringtones; >= 10001 - user-defined ringtones uploaded to your gateway via MiHome app.
-    volume: level from 1 to 100.
+    Play one of standard ringtones or user-defined sound.
+    `sound_id` - 0-8, 10, 13, 20-29 - standard ringtones; >= 10001 - user-defined ringtones uploaded to your gateway via MiHome app
+    `volume` - level from 1 to 100
 
     Check the reference to get more about sound_id value: https://github.com/louisZL/lumi-gateway-local-api/blob/master/%E7%BD%91%E5%85%B3.md
     """
@@ -28,6 +29,7 @@ def play(sound_id, volume=20):
 
 
 def stop():
+    """Stop playing any sound from speaker"""
     command = get_base_command()
     command['data'].update(mid=10000)
     send_command(command)
