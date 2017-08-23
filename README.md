@@ -39,4 +39,4 @@ You could enable or disable an app by changing `ENABLED_APPS` section in `config
 
 To make web interface even better, you could put your favorite images into `web/static/img/bg/` directory. Background image changes every 5 minutes (hovewer, you could tweak the interval in js file).
 
-![goodbye-mihome](https://cloud.githubusercontent.com/assets/840753/22369900/f8ca5c20-e4a7-11e6-825d-285541cc2863.jpg)
+![goodbye-mihome](https://user-images.githubusercontent.com/840753/29633763-60f6ea62-8858-11e7-8fc9-415f5e8daa72.jpg)
