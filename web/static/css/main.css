@@ -110,7 +110,7 @@ body {
     opacity: .7;
 }
 
-.yee .wrapper {
+.yee .wrapper, .magnet-block {
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 4px;
     padding: 5px 10px;
@@ -178,4 +178,18 @@ body {
 
 .yee .slider-selection {
     background-image: linear-gradient(to bottom, #c9c9c9 0, #c5c5c5 100%);
+}
+
+.magnet-block {
+    margin: 10px;
+    display: inline-block;
+}
+
+.magnet-block .magnet-name, .magnet-block .magnet-status {
+    font-size: 16px;
+    display: inline;
+}
+
+.magnet-block .magnet-status {
+    margin-left: 10px;
 }

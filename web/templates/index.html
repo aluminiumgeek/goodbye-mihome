@@ -16,6 +16,16 @@
             <span class="glyphicon glyphicon-lamp" aria-hidden="true"></span>
             <input type='text' id='color' />
         </div>
+        {% if magnets %}
+        <div class='magnet-block'>
+            {% for magnet in magnets %}
+                <div class='magnet' id='{{ magnet["sid"] }}'>
+                    <div class='magnet-name'>{{ magnet['name'] }}</div>
+                    <div class='magnet-status'><i class='fa fa-{{ "lock" if magnet["status"] == "close" else "unlock" }}'></i></div>
+                </div>
+            {% end %}
+        </div>
+        {% end %}
         <div class='container'>
             <div class='row ht'>
                 {% for sensor in sensors_current %}

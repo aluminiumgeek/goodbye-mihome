@@ -10,7 +10,7 @@ import tornado.websocket
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import config
-from utils import format_value, Notifications
+from utils import get_store, format_value, Notifications
 
 conn = psycopg2.connect("dbname={} user={} password={}".format(config.DBNAME, config.DBUSER, config.DBPASS))
 
@@ -33,7 +33,7 @@ class MainHandler(tornado.web.RequestHandler):
         for sid, temperature, humidity in cursor.fetchall():
             sensors_current.append({
                 'sid': sid,
-                'name': config.SENSORS.get(sid, sid),
+                'name': config.SENSORS.get(sid, {}).get('name', sid),
                 'temperature': format_value(temperature, split=True),  #'{:0.2f}'.format(temperature/100.0),
                 'humidity': format_value(humidity, split=True)  #'{:0.2f}'.format(humidity/100.0)
             })
@@ -66,11 +66,22 @@ class MainHandler(tornado.web.RequestHandler):
         brightness, color, status = gateway_led.get_status()
         brightness = int(brightness, 16) / 100
 
+        magnets = []
+        for sid, sensor in config.SENSORS.items():
+            if sensor.get('device') == 'magnet':
+                magnet_status = get_store().get('magnet_{}'.format(sid))
+                magnets.append({
+                    'sid': sid,
+                    'name': sensor.get('name'),
+                    'status': magnet_status.decode() if magnet_status else 'open',
+                })
+
         self.render(
             "templates/index.html",
             sensors=config.SENSORS,
             sensors_current=sensors_current,
             sensors_data=sensors_data,
+            magnets=magnets,
             bg_images=bg_images,
             gateway_led={
                 'brightness': hex(int(brightness*100))[2:],

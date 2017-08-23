@@ -93,6 +93,13 @@
                 create_chart(data.sid);
             }
 
+            if (data.device == 'magnet') {
+                var magnet = $('.magnet#' + data.sid);
+                magnet.find('.magnet-name').text(data.name);
+                var icon = data.status == 'open' ? 'unlock' : 'lock';
+                magnet.find('.magnet-status').html('<i class="fa fa-' + icon + '"></i>');
+            }
+
             if (data.device == 'gateway_led') {
                 if (data.return == 'ok') {
                     blocked_led_toggle = false;
