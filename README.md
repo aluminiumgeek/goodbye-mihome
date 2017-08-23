@@ -9,6 +9,7 @@ If you like this project, you might want to buy me a cup of coffee :)
 ### Currently supported devices
 
 - Temperature and humidity sensor: collect data, show current value and line charts.
+- Magnet (door/window close sensor): collect data, show current status, pubsub service to be used in apps.
 - Gateway LED: change color, set brightness, toggle status, show current value.
 - Gateway Speaker: play standard and user-defined (uploaded via MiHome app) sounds with custom volume, interrupt playing.
 - Yeelight smart LED bulbs: toggle status, set brightness, set name, create scenes, manage cron jobs.

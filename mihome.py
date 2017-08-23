@@ -13,7 +13,7 @@ from datetime import datetime
 from threading import Thread
 
 import config
-from plugins import sensor_ht, yeelight
+from plugins import sensor_ht, magnet, yeelight
 from utils import get_store
 from web.w import run_app as web_app
 
@@ -54,6 +54,8 @@ def receiver(service='mihome'):
             data = json.loads(message['data'])
             if message.get('model') == 'sensor_ht' and not sensor_ht.process(conn, cursor, current, message, data):
                 continue
+            elif message.get('model') == 'magnet':
+                magnet.process(store, message, data)
             elif message.get('model') == 'gateway':
                 gateway.process(store, message, data)
             current = {}
