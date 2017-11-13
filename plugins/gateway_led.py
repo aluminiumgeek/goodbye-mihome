@@ -12,10 +12,11 @@ store = get_store()
 
 
 def get_base_command():
+    gateway_sid = store.get('gateway_sid')
     command = {
         'cmd': 'write',
         'model': 'gateway',
-        'sid': store.get('gateway_sid').decode(),
+        'sid': gateway_sid.decode() if gateway_sid else '',
         'data': {
             'rgb': None,
             'key': get_key().decode()

@@ -4,10 +4,11 @@ from utils import get_store
 
 def get_base_command():
     store = get_store()
+    gateway_sid = store.get('gateway_sid')
     return {
         'cmd': 'write',
         'model': 'gateway',
-        'sid': store.get('gateway_sid').decode(),
+        'sid': gateway_sid.decode() if gateway_sid else '',
         'short_id': 0,
         'data': {
             'key': get_key().decode()
