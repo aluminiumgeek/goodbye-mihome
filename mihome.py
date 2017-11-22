@@ -52,7 +52,7 @@ def receiver(service='mihome'):
         if service == 'mihome':
             message = json.loads(data.decode())
             data = json.loads(message['data'])
-            if message.get('model') == 'sensor_ht' and not sensor_ht.process(conn, cursor, current, message, data):
+            if message.get('model') in ('sensor_ht', 'weather.v1') and not sensor_ht.process(conn, cursor, current, message, data):
                 continue
             elif message.get('model') == 'magnet':
                 magnet.process(store, message, data)

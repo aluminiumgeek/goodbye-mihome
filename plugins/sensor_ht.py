@@ -6,9 +6,10 @@ from web.w import UpdatesHandler
 
 
 def process(conn, cursor, current, message, data):
-    if message.get('model') != 'sensor_ht':
+    model = message.get('model')
+    if model not in ('sensor_ht', 'weather.v1'):
         return False
-    
+
     save = False
     if message.get('cmd') == 'report':
         if current:
