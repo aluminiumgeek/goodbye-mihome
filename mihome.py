@@ -44,11 +44,15 @@ def receiver(service='mihome'):
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, SOCKET_BUFSIZE)
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+    sock.settimeout(20)  # 2x of heartbeat period
 
     current = {}
 
     while True:
-        data, _ = sock.recvfrom(SOCKET_BUFSIZE)  # buffer size is 1024 bytes
+        try:
+            data, _ = sock.recvfrom(SOCKET_BUFSIZE)  # buffer size is 1024 bytes
+        except socket.timeout:
+            continue
         print(datetime.now().isoformat(), data)
         if service == 'mihome':
             message = json.loads(data.decode())
@@ -70,7 +74,7 @@ def send_command(command, timeout=10):
         command['data'] = json.dumps(command['data'])
     address = get_store().get('gateway_addr')
     if address is None:
-        print("Doesn't receive any heartbeat from gateway. Delaying request for 10 seconds.")
+        print("Didn't receive any heartbeat from gateway yet. Delaying request for 10 seconds.")
         time.sleep(10)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(timeout)
