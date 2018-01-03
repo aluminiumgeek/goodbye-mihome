@@ -10,6 +10,7 @@ import sys
 import time
 from Crypto.Cipher import AES
 from datetime import datetime
+from multiprocessing import Process
 from threading import Thread
 
 import config
@@ -111,11 +112,11 @@ if __name__ == '__main__':
             print('Could not import app "{}": {}'.format(app_name, e))
             continue
         kwargs = {'store': get_store(), 'conn': conn, 'cursor': cursor}
-        Thread(target=app.run, kwargs=kwargs).start()
+        Process(target=app.run, kwargs=kwargs).start()
         print('Loaded app: {}'.format(app_name))
 
     for service in MULTICAST:
-        Thread(target=receiver, args=(service,)).start()
+        Process(target=receiver, args=(service,)).start()
 
     # Discover Yeelight bulbs
     yeelight.discover()
