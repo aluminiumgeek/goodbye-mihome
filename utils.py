@@ -21,6 +21,13 @@ def get_store():
     return store
 
 
+def time_in_range(start, end, check_time):
+    if start <= end:
+        return start <= check_time <= end
+    else:
+        return start <= check_time or check_time <= end
+
+
 class Notifications:
     STORE_KEY = 'mihome_notifications'
     store = get_store()
