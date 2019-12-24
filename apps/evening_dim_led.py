@@ -24,4 +24,4 @@ def run(store, conn, cursor):
         elif dimmed is True or dimmed is None:
             gateway_led.set_brightness(normal_brightness)
             dimmed = False
-        time.sleep(4)
+        time.sleep(60)
