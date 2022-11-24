@@ -4,6 +4,8 @@ DEBUG = True
 DBNAME = 'mihome'
 DBUSER = 'mihome'
 DBPASS = 'password'
+DBHOST = 'localhost'
+DBPORT = '5432'
 
 # Redis connection
 REDIS_HOST = 'localhost'
