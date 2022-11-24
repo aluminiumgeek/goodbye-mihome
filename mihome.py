@@ -18,7 +18,7 @@ from plugins import sensor_ht, magnet, yeelight
 from utils import get_store
 from web.w import run_app as web_app
 
-conn = psycopg2.connect("dbname={} user={} password={}".format(config.DBNAME, config.DBUSER, config.DBPASS))
+conn = psycopg2.connect("dbname={} user={} password={} host={} port={}".format(config.DBNAME, config.DBUSER, config.DBPASS, config.DBHOST, config.DBPORT))
 cursor = conn.cursor()
 
 MULTICAST = {
