@@ -1,4 +1,4 @@
 psycopg2==2.8.4
-tornado==4.4.2
+tornado==6.3.2
 pycrypto==2.6.1
 redis==2.10.5
